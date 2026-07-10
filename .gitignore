@@ -1,0 +1,56 @@
+# Binaries
+
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.app
+
+# Go build
+
+/bin/
+/build/
+/dist/
+
+# Test binaries
+
+*.test
+
+# Go cache
+
+.cache/
+go-build/
+
+# IDE / Editor files
+
+.vscode/
+.idea/
+
+# OS files
+
+.DS_Store
+Thumbs.db
+
+# Logs
+
+*.log
+
+# Environment files
+
+.env
+
+# Temporary files
+
+tmp/
+temp/
+out
+
+CLAUDE.md
+
+/frontend/node_modules
+/frontend/dist
+vite.config.js.timestamp
+.npm
