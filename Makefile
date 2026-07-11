@@ -15,7 +15,7 @@ env-cleanup:
 	@read -p "Clear all volume files in the environment? Risk of data loss. [y/N]: " ans; \
 	if [ "$$ans" = "y" ]; then \
 		docker compose down shortener-postgres && \
-		rm -rf ${PROJECT_ROOT}/out/pgdata && \
+		rm -rf ./out/pgdata && \
 		echo "Environment files have been cleared"; \
 	else \
 		echo "Environment cleanup cancelled"; \
@@ -25,7 +25,7 @@ env-cleanup:
 logs-cleanup:
 	@read -p "Clear all log files? Risk of losing logs. [y/N]: " ans; \
 	if [ "$$ans" = "y" ]; then \
-		rm -rf ${PROJECT_ROOT}/out/logs && \
+		rm -rf ./out/logs && \
 		echo "Logs files have been cleared"; \
 	else \
 		echo "Logs files cleanup cancelled"; \
@@ -43,7 +43,7 @@ logs-cleanup:
 	
 shortener-run:
 	@go mod tidy && \
-	go run ${PROJECT_ROOT}/cmd/server/main.go
+	go run ./cmd/server/main.go
 
 # ============
 # Deploy
