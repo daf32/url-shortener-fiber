@@ -1,4 +1,4 @@
-package http
+package transport
 
 import (
 	"errors"
@@ -17,11 +17,11 @@ type shortenResponse struct {
 	Original string `json:"original"`
 }
 
-func (h *HTTPHanlder) Shorten(c fiber.Ctx) error {
+func (h *HTTPHandler) Shorten(c fiber.Ctx) error {
 	var req shortenerRequest
 
 	if err := c.Bind().Body(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(domain.NewErrorResponse(
+		return c.Status(fiber.StatusBadRequest).JSON(NewErrorResponse(
 			err,
 			"failed to decode and validate request",
 		))
@@ -29,7 +29,7 @@ func (h *HTTPHanlder) Shorten(c fiber.Ctx) error {
 
 	link, err := h.svc.Shorten(req.URL)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(domain.NewErrorResponse(
+		return c.Status(fiber.StatusInternalServerError).JSON(NewErrorResponse(
 			err,
 			"failed to generate url code",
 		))
@@ -43,19 +43,19 @@ func (h *HTTPHanlder) Shorten(c fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(resp)
 }
 
-func (h *HTTPHanlder) Resolve(c fiber.Ctx) error {
+func (h *HTTPHandler) Resolve(c fiber.Ctx) error {
 	code := c.Params("code")
 
 	link, err := h.svc.Resolve(code)
 	if err != nil {
 		if errors.Is(err, domain.ErrNotFound) {
-			return c.Status(fiber.StatusNotFound).JSON(domain.NewErrorResponse(
+			return c.Status(fiber.StatusNotFound).JSON(NewErrorResponse(
 				err,
 				"code not found",
 			))
 		}
 
-		return c.Status(fiber.StatusInternalServerError).JSON(domain.NewErrorResponse(
+		return c.Status(fiber.StatusInternalServerError).JSON(NewErrorResponse(
 			err,
 			"failed to get link",
 		))

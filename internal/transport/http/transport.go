@@ -1,4 +1,4 @@
-package http
+package transport
 
 import "github.com/daf32/url-shortener-fiber/internal/domain"
 
@@ -7,12 +7,12 @@ type ShortenerService interface {
 	Resolve(code string) (domain.Link, error)
 }
 
-type HTTPHanlder struct {
+type HTTPHandler struct {
 	svc ShortenerService
 }
 
-func NewHTTPHanlder(svc ShortenerService) *HTTPHanlder {
-	return &HTTPHanlder{
+func NewHTTPHandler(svc ShortenerService) *HTTPHandler {
+	return &HTTPHandler{
 		svc: svc,
 	}
 }
