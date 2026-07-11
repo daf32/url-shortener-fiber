@@ -1,15 +1,15 @@
 services:
   shortener:
     build:
-      context: ${PROJECT_ROOT}
-      dockerfile: ${PROJECT_ROOT}/cmd/server/Dockerfile
+      context: .
+      dockerfile: cmd/server/Dockerfile
     container_name: shortener
     restart: unless-stopped
     env_file: .env
     environment:
       POSTGRES_HOST: postgres
     volumes:
-      - ${PROJECT_ROOT}/out/logs:/app/out/logs
+      - ./out/logs:/app/out/logs
     ports:
       - "3000:3000"
     depends_on:
@@ -24,17 +24,12 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "127.0.0.1:5432:5432"
     volumes:
-      - ${PROJECT_ROOT}/out/pgdata:/var/lib/postgresql/data
+      - ./out/pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 3s
       retries: 5
-
-  port-forwarder:
-    image: alpine/socat:1.8.0.3
-    container_name: shortener-postgres-port-forwarder
-    command: tcp-listen:5432,fork,reuseaddr tcp-connect:shortener-postgres:5432
-    ports:
-      - "127.0.0.1:5432:5432"
