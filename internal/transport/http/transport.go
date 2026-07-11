@@ -8,11 +8,13 @@ type ShortenerService interface {
 }
 
 type HTTPHandler struct {
-	svc ShortenerService
+	svc     ShortenerService
+	baseURL string
 }
 
-func NewHTTPHandler(svc ShortenerService) *HTTPHandler {
+func NewHTTPHandler(svc ShortenerService, baseURL string) *HTTPHandler {
 	return &HTTPHandler{
-		svc: svc,
+		svc:     svc,
+		baseURL: baseURL,
 	}
 }

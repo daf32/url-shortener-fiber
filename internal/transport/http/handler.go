@@ -36,8 +36,8 @@ func (h *HTTPHandler) Shorten(c fiber.Ctx) error {
 	}
 
 	resp := shortenResponse{
-		Code: link.Code,
-		Short: c.BaseURL() + "/" + link.Code,
+		Code:     link.Code,
+		Short:    c.BaseURL() + "/" + link.Code,
 		Original: link.Original,
 	}
 	return c.Status(fiber.StatusCreated).JSON(resp)
