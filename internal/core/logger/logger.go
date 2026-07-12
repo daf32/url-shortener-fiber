@@ -1,4 +1,4 @@
-package logger
+package core_logger
 
 import (
 	"fmt"
@@ -6,8 +6,13 @@ import (
 	"os"
 	"path/filepath"
 
+	"go.uber.org/zap"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
+
+type Logger struct {
+	*zap.Logger
+}
 
 func NewLogWriter(folder string) (io.Writer, error) {
 	if err := os.MkdirAll(folder, 0o755); err != nil {

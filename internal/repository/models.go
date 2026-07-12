@@ -3,7 +3,7 @@ package repository
 import (
 	"time"
 
-	"github.com/daf32/url-shortener-fiber/internal/domain"
+	"github.com/daf32/url-shortener-fiber/internal/core/domain"
 )
 
 type LinkModel struct {

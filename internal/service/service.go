@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"math/rand/v2"
 
-	"github.com/daf32/url-shortener-fiber/internal/domain"
+	"github.com/daf32/url-shortener-fiber/internal/core/domain"
 )
 
 type LinkRepository interface {

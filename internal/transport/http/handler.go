@@ -3,7 +3,7 @@ package transport
 import (
 	"errors"
 
-	"github.com/daf32/url-shortener-fiber/internal/domain"
+	"github.com/daf32/url-shortener-fiber/internal/core/domain"
 	"github.com/gofiber/fiber/v3"
 )
 
@@ -17,7 +17,7 @@ type shortenResponse struct {
 	OriginalURL string `json:"original_url"`
 }
 
-func (h *HTTPHandler) Shorten(c fiber.Ctx) error {
+func (h *ShortenerHTTPHandler) Shorten(c fiber.Ctx) error {
 	var req shortenerRequest
 
 	if err := c.Bind().Body(&req); err != nil {
@@ -41,7 +41,7 @@ func (h *HTTPHandler) Shorten(c fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(resp)
 }
 
-func (h *HTTPHandler) Resolve(c fiber.Ctx) error {
+func (h *ShortenerHTTPHandler) Resolve(c fiber.Ctx) error {
 	code := c.Params("code")
 
 	link, err := h.svc.Resolve(c.Context(), code)

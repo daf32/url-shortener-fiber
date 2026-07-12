@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/daf32/url-shortener-fiber/internal/domain"
+	"github.com/daf32/url-shortener-fiber/internal/core/domain"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 

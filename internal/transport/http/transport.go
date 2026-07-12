@@ -2,8 +2,9 @@ package transport
 
 import (
 	"context"
+	"time"
 
-	"github.com/daf32/url-shortener-fiber/internal/domain"
+	"github.com/daf32/url-shortener-fiber/internal/core/domain"
 )
 
 type ShortenerService interface {
@@ -11,14 +12,25 @@ type ShortenerService interface {
 	Resolve(ctx context.Context, code string) (domain.Link, error)
 }
 
-type HTTPHandler struct {
-	svc     ShortenerService
-	baseURL string
+type LimiterConfig struct {
+	Max        int
+	Expiration time.Duration
 }
 
-func NewHTTPHandler(svc ShortenerService, baseURL string) *HTTPHandler {
-	return &HTTPHandler{
+type ShortenerHTTPHandler struct {
+	svc     ShortenerService
+	baseURL string
+	limiter LimiterConfig
+}
+
+func NewShortenerHTTPHandler(
+	svc ShortenerService,
+	baseURL string,
+	limiter LimiterConfig,
+) *ShortenerHTTPHandler {
+	return &ShortenerHTTPHandler{
 		svc:     svc,
 		baseURL: baseURL,
+		limiter: limiter,
 	}
 }
