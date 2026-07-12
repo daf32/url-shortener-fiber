@@ -35,7 +35,26 @@ logs-cleanup:
 # Migrations
 # ============
 
+GOOSE_DRIVER ?= postgres
+GOOSE_MIGRATION_DIR ?= ./migrations
+GOOSE_DBSTRING = postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)?sslmode=$(POSTGRES_SSLMODE)
 
+goose = GOOSE_DRIVER=$(GOOSE_DRIVER) GOOSE_MIGRATION_DIR=$(GOOSE_MIGRATION_DIR) GOOSE_DBSTRING="$(GOOSE_DBSTRING)" goose
+
+migrate-create:
+	@if [ -z "$(name)" ]; then \
+		echo "Usage: make migrate-create name=add_clicks"; exit 1; \
+	fi
+	@$(goose) -s create $(name) sql
+
+migrate-up:
+	@$(goose) up
+
+migrate-down:
+	@$(goose) down
+
+migrate-status:
+	@$(goose) status
 
 # ============
 # Startap app
