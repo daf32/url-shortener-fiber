@@ -1,13 +1,24 @@
 package domain
 
+import "time"
+
 type Link struct {
-	Code     string `json:"code"`
-	Original string `json:"original"`
+	ID          int64     `db:"id"           json:"-"`
+	Code        string    `db:"code"         json:"code"`
+	OriginalURL string    `db:"original_url" json:"original_url"`
+	CreatedAt   time.Time `db:"created_at"   json:"created_at"`
 }
 
-func NewLink(code string, original string) Link {
+func NewLink(
+	id int64,
+	code string,
+	originalURL string,
+	createdAt time.Time,
+) Link {
 	return Link{
-		Code:     code,
-		Original: original,
+		ID:          id,
+		Code:        code,
+		OriginalURL: originalURL,
+		CreatedAt:   createdAt,
 	}
 }

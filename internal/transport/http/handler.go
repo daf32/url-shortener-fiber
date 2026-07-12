@@ -12,9 +12,9 @@ type shortenerRequest struct {
 }
 
 type shortenResponse struct {
-	Code     string `json:"code"`
-	Short    string `json:"short"`
-	Original string `json:"original"`
+	Code        string `json:"code"`
+	Short       string `json:"short"`
+	OriginalURL string `json:"original_url"`
 }
 
 func (h *HTTPHandler) Shorten(c fiber.Ctx) error {
@@ -27,7 +27,7 @@ func (h *HTTPHandler) Shorten(c fiber.Ctx) error {
 		))
 	}
 
-	link, err := h.svc.Shorten(req.URL)
+	link, err := h.svc.Shorten(c.Context(), req.URL)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(NewErrorResponse(
 			err,
@@ -36,9 +36,9 @@ func (h *HTTPHandler) Shorten(c fiber.Ctx) error {
 	}
 
 	resp := shortenResponse{
-		Code:     link.Code,
-		Short:    h.baseURL,
-		Original: link.Original,
+		Code:        link.Code,
+		Short:       h.baseURL + "/" + link.Code,
+		OriginalURL: link.OriginalURL,
 	}
 	return c.Status(fiber.StatusCreated).JSON(resp)
 }
@@ -46,7 +46,7 @@ func (h *HTTPHandler) Shorten(c fiber.Ctx) error {
 func (h *HTTPHandler) Resolve(c fiber.Ctx) error {
 	code := c.Params("code")
 
-	link, err := h.svc.Resolve(code)
+	link, err := h.svc.Resolve(c.Context(), code)
 	if err != nil {
 		if errors.Is(err, domain.ErrNotFound) {
 			return c.Status(fiber.StatusNotFound).JSON(NewErrorResponse(
@@ -61,5 +61,5 @@ func (h *HTTPHandler) Resolve(c fiber.Ctx) error {
 		))
 	}
 
-	return c.Redirect().To(link.Original)
+	return c.Redirect().To(link.OriginalURL)
 }

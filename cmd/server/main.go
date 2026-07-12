@@ -1,6 +1,9 @@
 package main
 
 import (
+	"context"
+	"time"
+
 	"github.com/daf32/url-shortener-fiber/internal/config"
 	"github.com/daf32/url-shortener-fiber/internal/logger"
 	"github.com/daf32/url-shortener-fiber/internal/repository"
@@ -15,7 +18,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	repo := repository.NewMemoryRepo()
+	ctx := context.Background()
+
+	db, err := repository.NewDB(ctx, cfg.Postgres.DSN(), 25, 25, 2*time.Minute, 2*time.Minute)
+	if err != nil {
+		log.Fatal("failed to init postgres connection pool: ", err)
+	}
+
+	repo := repository.NewShorteneRepo(db)
 	svc := service.NewShortenerService(repo)
 	handler := transport.NewHTTPHandler(svc, cfg.Server.BaseURL)
 
