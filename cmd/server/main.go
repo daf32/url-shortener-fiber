@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"os"
 	"os/signal"
 	"syscall"
 
@@ -9,13 +11,14 @@ import (
 	core_logger "github.com/daf32/url-shortener-fiber/internal/core/logger"
 	core_server "github.com/daf32/url-shortener-fiber/internal/core/server"
 	"github.com/daf32/url-shortener-fiber/internal/repository"
+	"go.uber.org/zap"
 
 	"github.com/daf32/url-shortener-fiber/internal/service"
 	transport "github.com/daf32/url-shortener-fiber/internal/transport/http"
 	"github.com/gofiber/fiber/v3/log"
 
-	"github.com/gofiber/fiber/v3/middleware/logger"
 	"github.com/gofiber/fiber/v3/middleware/recover"
+	"github.com/gofiber/fiber/v3/middleware/requestid"
 )
 
 func main() {
@@ -31,6 +34,16 @@ func main() {
 	)
 	defer cancel()
 
+	log, err := core_logger.NewLogger(core_logger.LoggerConfig{
+		Folder: cfg.Logger.Folder,
+		Level:  cfg.Logger.Level,
+	})
+	if err != nil {
+		fmt.Println("failed to init application logger: ", err)
+		os.Exit(1)
+	}
+	defer log.Close()
+
 	db, err := repository.NewDB(
 		ctx,
 		cfg.Postgres.DSN(),
@@ -40,7 +53,7 @@ func main() {
 		cfg.Postgres.ConnMaxIdleTime,
 	)
 	if err != nil {
-		log.Fatal("failed to init postgres connection pool: ", err)
+		log.Fatal("failed to init postgres connection pool: ", zap.Error(err))
 	}
 	defer db.Close()
 
@@ -55,29 +68,22 @@ func main() {
 		},
 	)
 
-	logWriter, err := core_logger.NewLogWriter(cfg.Logger.Folder)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-
 	httpServer := core_server.NewHTTPServer(
 		core_server.ServerConfig{
 			Port:            cfg.Server.Port,
 			BaseURL:         cfg.Server.BaseURL,
 			ShutdownTimeout: cfg.Server.ShutdownTimeout,
 		},
-		nil,
+		log,
 		core_server.WithMiddleware(
+			requestid.New(),
 			recover.New(),
-			logger.New(logger.Config{
-				Stream: logWriter,
-			}),
+			core_server.RequestLogger(log),
 		),
 		core_server.WithRoutes("/", handler),
 	)
 
 	if err := httpServer.Run(ctx); err != nil {
-		log.Fatal(err)
+		log.Error("HTTP server run error", zap.Error(err))
 	}
 }
