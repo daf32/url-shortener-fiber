@@ -41,7 +41,3 @@ func NewDB(
 
 	return &DB{db}, nil
 }
-
-func (db *DB) Close() error {
-	return db.Close()
-}

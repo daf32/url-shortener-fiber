@@ -24,8 +24,9 @@ func main() {
 	if err != nil {
 		log.Fatal("failed to init postgres connection pool: ", err)
 	}
+	defer db.Close()
 
-	repo := repository.NewShorteneRepo(db)
+	repo := repository.NewShortenerRepo(db)
 	svc := service.NewShortenerService(repo)
 	handler := transport.NewHTTPHandler(svc, cfg.Server.BaseURL)
 

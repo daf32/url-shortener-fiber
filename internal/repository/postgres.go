@@ -10,19 +10,21 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-type ShorteneRepo struct {
-	db DB
+type ShortenerRepo struct {
+	db *DB
 }
 
-func NewShorteneRepo(
+func NewShortenerRepo(
 	db *DB,
-) *ShorteneRepo {
-	return &ShorteneRepo{db: *db}
+) *ShortenerRepo {
+	return &ShortenerRepo{db: db}
 }
 
-const uniqueViolationCode = "23505"
+const (
+	uniqueViolationCode = "23505"
+)
 
-func (r *ShorteneRepo) Save(ctx context.Context, code, url string) (domain.Link, error) {
+func (r *ShortenerRepo) Save(ctx context.Context, code, url string) (domain.Link, error) {
 	const query = `
 		INSERT INTO links (code, original_url)
 		VALUES ($1, $2)
@@ -46,7 +48,7 @@ func (r *ShorteneRepo) Save(ctx context.Context, code, url string) (domain.Link,
 	return linkDomain, nil
 }
 
-func (r *ShorteneRepo) Get(ctx context.Context, code string) (domain.Link, error) {
+func (r *ShortenerRepo) Get(ctx context.Context, code string) (domain.Link, error) {
 	const query = `
 		SELECT id, code, original_url, created_at
 		FROM links

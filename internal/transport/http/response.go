@@ -1,13 +1,11 @@
 package transport
 
 type ErrorResponse struct {
-	Error   string `json:"error"`
 	Message string `json:"message"`
 }
 
-func NewErrorResponse(err error, msg string) ErrorResponse {
+func NewErrorResponse(msg string) ErrorResponse {
 	return ErrorResponse{
-		Error:   err.Error(),
 		Message: msg,
 	}
 }
