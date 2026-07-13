@@ -3,7 +3,6 @@ package core_server
 import (
 	"errors"
 
-	"github.com/daf32/url-shortener-fiber/internal/core/domain"
 	core_logger "github.com/daf32/url-shortener-fiber/internal/core/logger"
 	"github.com/gofiber/fiber/v3"
 	"go.uber.org/zap"
@@ -58,12 +57,15 @@ func (h *HTTPResponseHandler) ErrorResponse(err error, msg string) error {
 	)
 
 	switch {
-	case errors.Is(err, domain.ErrCodeExists):
+	case errors.Is(err, ErrCodeExists):
 		statusCode = fiber.StatusConflict
 		logFunc = h.log.Warn
-	case errors.Is(err, domain.ErrNotFound):
+	case errors.Is(err, ErrNotFound):
 		statusCode = fiber.StatusNotFound
 		logFunc = h.log.Debug
+	case errors.Is(err, ErrInvalidArgument):
+		statusCode = fiber.StatusBadRequest
+		logFunc = h.log.Warn
 	default:
 		statusCode = fiber.StatusInternalServerError
 		logFunc = h.log.Error
