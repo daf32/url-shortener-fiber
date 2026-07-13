@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/daf32/url-shortener-fiber/internal/core/domain"
+	core_logger "github.com/daf32/url-shortener-fiber/internal/core/logger"
 )
 
 type ShortenerService interface {
@@ -21,16 +22,19 @@ type ShortenerHTTPHandler struct {
 	svc     ShortenerService
 	baseURL string
 	limiter LimiterConfig
+	log     *core_logger.Logger
 }
 
 func NewShortenerHTTPHandler(
 	svc ShortenerService,
 	baseURL string,
 	limiter LimiterConfig,
+	log *core_logger.Logger,
 ) *ShortenerHTTPHandler {
 	return &ShortenerHTTPHandler{
 		svc:     svc,
 		baseURL: baseURL,
 		limiter: limiter,
+		log:     log,
 	}
 }

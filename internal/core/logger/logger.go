@@ -1,7 +1,6 @@
 package core_logger
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -10,32 +9,6 @@ import (
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
-
-type logggerContextKey struct{}
-
-var (
-	key = logggerContextKey{}
-)
-
-func ToContext(
-	ctx context.Context,
-	log *Logger,
-) context.Context {
-	return context.WithValue(
-		ctx,
-		key,
-		log,
-	)
-}
-
-func FromContext(ctx context.Context) *Logger {
-	log, ok := ctx.Value(key).(*Logger)
-	if !ok {
-		panic("no logger in context")
-	}
-
-	return log
-}
 
 type LoggerConfig struct {
 	Level  string
@@ -52,7 +25,7 @@ func NewLogger(cfg LoggerConfig) (*Logger, error) {
 		return nil, fmt.Errorf("unmarshal log level:, %w", err)
 	}
 
-	if err := os.MkdirAll(cfg.Folder, 0755); err != nil {
+	if err := os.MkdirAll(cfg.Folder, 0o755); err != nil {
 		return nil, fmt.Errorf("mkdir log folder: %w", err)
 	}
 

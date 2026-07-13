@@ -15,7 +15,6 @@ import (
 
 	"github.com/daf32/url-shortener-fiber/internal/service"
 	transport "github.com/daf32/url-shortener-fiber/internal/transport/http"
-	"github.com/gofiber/fiber/v3/log"
 
 	"github.com/gofiber/fiber/v3/middleware/recover"
 	"github.com/gofiber/fiber/v3/middleware/requestid"
@@ -24,7 +23,7 @@ import (
 func main() {
 	cfg, err := core_config.Load()
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	ctx, cancel := signal.NotifyContext(
@@ -53,7 +52,8 @@ func main() {
 		cfg.Postgres.ConnMaxIdleTime,
 	)
 	if err != nil {
-		log.Fatal("failed to init postgres connection pool: ", zap.Error(err))
+		log.Error("failed to init postgres connection pool: ", zap.Error(err))
+		return
 	}
 	defer db.Close()
 
@@ -66,6 +66,7 @@ func main() {
 			Max:        cfg.Limiter.Max,
 			Expiration: cfg.Limiter.Expiration,
 		},
+		log,
 	)
 
 	httpServer := core_server.NewHTTPServer(
