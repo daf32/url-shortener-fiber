@@ -7,7 +7,6 @@ import (
 	"math/rand/v2"
 
 	"github.com/daf32/url-shortener-fiber/internal/core/domain"
-	core_server "github.com/daf32/url-shortener-fiber/internal/core/server"
 )
 
 type LinkRepository interface {
@@ -44,7 +43,7 @@ func (s *ShortenerService) Shorten(ctx context.Context, url string) (domain.Link
 		if err == nil {
 			return link, nil
 		}
-		if errors.Is(err, core_server.ErrCodeExists) {
+		if errors.Is(err, domain.ErrCodeExists) {
 			continue
 		}
 		return domain.Link{}, err

@@ -1,4 +1,4 @@
-package core_server
+package domain
 
 import "errors"
 

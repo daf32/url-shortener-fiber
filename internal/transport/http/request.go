@@ -1,8 +1,9 @@
-package core_server
+package transport
 
 import (
 	"fmt"
 
+	"github.com/daf32/url-shortener-fiber/internal/core/domain"
 	"github.com/gofiber/fiber/v3"
 )
 
@@ -11,7 +12,7 @@ func DecodeAndValidateRequest(c fiber.Ctx, dest any) error {
 		return fmt.Errorf(
 			"decode and validate: %v: %w",
 			err,
-			ErrInvalidArgument,
+			domain.ErrInvalidArgument,
 		)
 	}
 

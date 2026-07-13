@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/daf32/url-shortener-fiber/internal/core/domain"
-	core_server "github.com/daf32/url-shortener-fiber/internal/core/server"
 )
 
 type MemoryRepo struct {
@@ -32,7 +31,7 @@ func (r *MemoryRepo) Get(ctx context.Context, code string) (domain.Link, error) 
 	defer r.mu.Unlock()
 	link, ok := r.links[code]
 	if !ok {
-		return domain.Link{}, core_server.ErrNotFound
+		return domain.Link{}, domain.ErrNotFound
 	}
 
 	return link, nil

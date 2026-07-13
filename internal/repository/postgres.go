@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/daf32/url-shortener-fiber/internal/core/domain"
-	core_server "github.com/daf32/url-shortener-fiber/internal/core/server"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
@@ -38,7 +37,7 @@ func (r *ShortenerRepo) Save(ctx context.Context, code, url string) (domain.Link
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == uniqueViolationCode {
-			return domain.Link{}, core_server.ErrCodeExists
+			return domain.Link{}, domain.ErrCodeExists
 		}
 
 		return domain.Link{}, fmt.Errorf("save link: %w", err)
@@ -61,7 +60,7 @@ func (r *ShortenerRepo) Get(ctx context.Context, code string) (domain.Link, erro
 	err := r.db.GetContext(ctx, &linkModel, query, code)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return domain.Link{}, core_server.ErrNotFound
+			return domain.Link{}, domain.ErrNotFound
 		}
 
 		return domain.Link{}, fmt.Errorf("get link: %w", err)

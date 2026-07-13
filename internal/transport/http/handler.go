@@ -1,7 +1,6 @@
 package transport
 
 import (
-	core_server "github.com/daf32/url-shortener-fiber/internal/core/server"
 	"github.com/gofiber/fiber/v3"
 )
 
@@ -16,11 +15,11 @@ type shortenResponse struct {
 }
 
 func (h *ShortenerHTTPHandler) Shorten(c fiber.Ctx) error {
-	responseHandler := core_server.NewHTTPResponseHandler(h.log, c)
+	responseHandler := NewHTTPResponseHandler(h.log, c)
 
 	var req shortenerRequest
 
-	if err := core_server.DecodeAndValidateRequest(c, &req); err != nil {
+	if err := DecodeAndValidateRequest(c, &req); err != nil {
 		return responseHandler.ErrorResponse(
 			err,
 			"failed to decode and validate request",
@@ -44,7 +43,7 @@ func (h *ShortenerHTTPHandler) Shorten(c fiber.Ctx) error {
 }
 
 func (h *ShortenerHTTPHandler) Resolve(c fiber.Ctx) error {
-	responseHandler := core_server.NewHTTPResponseHandler(h.log, c)
+	responseHandler := NewHTTPResponseHandler(h.log, c)
 	code := c.Params("code")
 
 	link, err := h.svc.Resolve(c.Context(), code)
